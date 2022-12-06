@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from colorama import Fore
 
 
 ROWS = 6 # Limit to 10 or less (heuristic may become bad)
@@ -17,8 +18,20 @@ class Board:
         self.__turn = random.choice([-1, 1])
     
     
+    # Print the board in a way that's easy for humans to understand.
     def print_board(self):
-        print(self.__board)
+        def filter(number):
+            if(number == 1):
+                return Fore.RED + 'X' + Fore.RESET
+            if(number == -1):
+                return Fore.YELLOW + 'O' + Fore.RESET
+            if(number == 0):
+                return '.'
+        for row in range(ROWS - 1, -1, -1):
+            for column in range(COLUMNS):
+                print(filter(self.__board[row][column]), end=" ")
+            print()
+        print("\n0 1 2 3 4 5 6")
     
     
     # Swap turn: -1 -> 1, 1 -> -1

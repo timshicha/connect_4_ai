@@ -3,6 +3,7 @@ from board import Board
    
 board = Board()
 
+
 while(1):
     a = input()
     if(a == 'move'):

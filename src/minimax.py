@@ -5,9 +5,8 @@ from math import inf
 class Minimax_Agent:
     
     
-    def __init__(self, search_depth):
-        # How far we should search before applying heuristic
-        self.__search_depth = search_depth
+    def __init__(self):
+        pass
         
         
     # Return value of the agent's best move.
@@ -92,7 +91,7 @@ class Minimax_Agent:
             # If full, this must be only move, so also okay to return.
             if(board.check_win(turn) or board.check_full()):
                 board.unmove()
-                return best_move
+                return move
             # Otherwise we need to play-out or estimate.
             # If we reached max search depth, apply heuristic:
             if(search_depth == 0):
@@ -109,7 +108,7 @@ class Minimax_Agent:
                     max_value = estimate
                     best_move = move
             board.unmove() # Undo the simulation move
-        return max_value
+        return best_move
         
         
         
