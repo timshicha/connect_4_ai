@@ -78,10 +78,38 @@ class Minimax_Agent:
             
         
     
-    
     # Get the best move for player given a board.
-    def get_best_move(self, board, player):
-        pass
+    def get_best_move(self, board, search_depth):
+        max_value = -inf
+        best_move = None
+        legal_moves = board.get_legal_moves()
+        
+        # Try each move:
+        for move in legal_moves:
+            turn = board.get_turn()
+            board.move(move) # Make the move
+            # If this was a winning move, just return (guaranteed best value).
+            # If full, this must be only move, so also okay to return.
+            if(board.check_win(turn) or board.check_full()):
+                board.unmove()
+                return best_move
+            # Otherwise we need to play-out or estimate.
+            # If we reached max search depth, apply heuristic:
+            if(search_depth == 0):
+                estimate = board.heuristic()
+                # If new best move found
+                if(estimate > max_value):
+                    max_value = estimate
+                    best_move = move
+            # Otherwise play out:
+            else:
+                estimate = self.min_move(board, max_value, search_depth - 1)
+                # If new best move found
+                if(estimate > max_value):
+                    max_value = estimate
+                    best_move = move
+            board.unmove() # Undo the simulation move
+        return max_value
         
         
         
