@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-ROWS = 6
+ROWS = 6 # Limit to 10 or less (heuristic may become bad)
 COLUMNS = 7
 
 # A connect 4 board.
@@ -31,7 +31,7 @@ class Board:
         # For each column
         for column in range(COLUMNS):
             # Examine the piece in the top row of this column
-            if(self.__board[ROWS - 1][column] == 0):
+            if(self.__board[ROWS - 1, column] == 0):
                 legal_moves.append(column)
         return legal_moves
     
@@ -39,7 +39,7 @@ class Board:
     # Make a move (assume the move is legal, otherwise a crash may occur)
     def move(self, column):
         row = self.__top[column]
-        self.__board[row][column] = self.__turn # Make the move
+        self.__board[row, column] = self.__turn # Make the move
         self.__history.append([row, column]) # Store move to history
         self.__top[column] += 1 # New drop location will be one row higher
         self.__swap_turn()
@@ -49,7 +49,7 @@ class Board:
     def unmove(self):
         if(len(self.__history) == 0): return # Nothing to undo
         [row, column] = self.__history.pop() # Remove move from history
-        self.__board[row][column] = 0 # Clear move
+        self.__board[row, column] = 0 # Clear move
         self.__top[column] -= 1 # Update new drop location
         self.__swap_turn()
         
@@ -69,7 +69,7 @@ class Board:
             for bottom_piece_row in range(0, ROWS - 3):
                 win = 1
                 for row in range(bottom_piece_row, bottom_piece_row + 4):
-                    if(self.__board[row][column] != player):
+                    if(self.__board[row, column] != player):
                         win = 0
                         break
                 if(win == 1): return 1
@@ -78,31 +78,31 @@ class Board:
             for leftmost_piece_column in range(0, COLUMNS - 3):
                 win = 1
                 for column in range(leftmost_piece_column, leftmost_piece_column + 4):
-                    if(self.__board[row][column] != player):
+                    if(self.__board[row, column] != player):
                         win = 0
                         break
                 if(win == 1): return 1
         # Check diagonal (/) wins
-        for bottom_piece_row in range(ROWS - 3):
+        for bottom_piece_row in range(0, ROWS - 3):
             for leftmost_piece_column in range(0, COLUMNS - 3):
                 win = 1
                 row = bottom_piece_row
                 column = leftmost_piece_column
                 for i in range(4):
-                    if(self.__board[row][column] != player):
+                    if(self.__board[row, column] != player):
                         win = 0
                         break
                     row += 1
                     column += 1
                 if(win == 1): return 1
         # Check diagonal (\) wins
-        for bottom_piece_row in range(ROWS - 3):
+        for bottom_piece_row in range(0, ROWS - 3):
             for rightmost_piece_column in range(3, COLUMNS):
                 win = 1
                 row = bottom_piece_row
                 column = rightmost_piece_column
                 for i in range(4):
-                    if(self.__board[row][column] != player):
+                    if(self.__board[row, column] != player):
                         win = 0
                         break
                     row += 1
@@ -110,3 +110,59 @@ class Board:
                 if(win == 1): return 1
         # If no win
         return 0
+    
+    
+    # Estimate how favorable this position is.
+    # Large negative numbers are very favorable for player -1
+    # and vice versa.
+    def heuristic(self):
+        score = 0
+        # Look for 4-in-a-row patterns where either player has
+        # 3 of their pieces and the last one is empty.
+        #
+        # Check vertical in each column:
+        for column in range(COLUMNS):
+            # If fewer than 3 pieces in this column, it's not possible:
+            if(self.__top[column] < 3):
+                continue
+            eval = self.__board[self.__top[column] - 1, column] +\
+                self.__board[self.__top[column] - 2, column] +\
+                self.__board[self.__top[column] - 3, column]
+            if(eval == 3): score += 1
+            elif(eval == -3): score -= 1
+        # Check horizontals in each row:
+        for row in range(ROWS):
+            for leftmost_piece_column in range(0, COLUMNS - 3):
+                # Pieces must add up to 3
+                eval = self.__board[row, leftmost_piece_column] +\
+                    self.__board[row, leftmost_piece_column + 1] +\
+                    self.__board[row, leftmost_piece_column + 2] +\
+                    self.__board[row, leftmost_piece_column + 3]
+                if(eval == 3): score += 1
+                elif(eval == -3): score -= 1
+        # Check diagonal (/) wins:
+        for bottom_piece_row in range(0, ROWS - 3):
+            for leftmost_piece_column in range(0, COLUMNS - 3):
+                eval = self.__board[bottom_piece_row, leftmost_piece_column] +\
+                    self.__board[bottom_piece_row + 1, leftmost_piece_column + 1] +\
+                    self.__board[bottom_piece_row + 2, leftmost_piece_column + 2] +\
+                    self.__board[bottom_piece_row + 3, leftmost_piece_column + 3]
+                if(eval == 3): score += 1
+                elif(eval == -3): score -= 1
+        # Check diagonal (\) wins:
+        for bottom_piece_row in range(0, ROWS - 3):
+            for rightmost_piece_column in range(3, COLUMNS):
+                eval = self.__board[bottom_piece_row, rightmost_piece_column] +\
+                    self.__board[bottom_piece_row + 1, rightmost_piece_column - 1] +\
+                    self.__board[bottom_piece_row + 2, rightmost_piece_column - 2] +\
+                    self.__board[bottom_piece_row + 3, rightmost_piece_column - 3]
+                if(eval == 3): score += 1
+                elif(eval == -3): score -= 1 
+        #           
+        # Finally, give points for having pieces in the middle column,
+        # giving more points to lower rows:
+        weight = 1
+        for row in range(ROWS):
+            score += self.__board[row, int(COLUMNS / 2)] * weight
+            weight -= 0.1  
+        return score
