@@ -14,7 +14,7 @@ class Minimax_Agent:
     # and return that value (alpha-beta pruning).
     # Depth_left tells us how much farther down the tree we will
     # search before applying the heuristic.
-    def max_move(self, board, kickout_value, depth_left):
+    def max_move(self, board, kickout_value, depth_left, heuristic_number):
         max_value = -inf
         legal_moves = board.get_legal_moves()
         
@@ -33,10 +33,10 @@ class Minimax_Agent:
             # Otherwise we need to play-out or estimate.
             # If we reached max search depth, apply heuristic:
             if(depth_left == 0):
-                max_value = max(max_value, board.heuristic())
+                max_value = max(max_value, board.heuristic(heuristic_number))
             # Otherwise play out:
             else:
-                max_value = max(max_value, self.min_move(board, max_value, depth_left - 1))
+                max_value = max(max_value, self.min_move(board, max_value, depth_left - 1, heuristic_number))
             board.unmove() # Undo the simulation move
             # If we can prune:
             if(max_value > kickout_value):
@@ -45,7 +45,7 @@ class Minimax_Agent:
 
         
     
-    def min_move(self, board, kickout_value, depth_left):
+    def min_move(self, board, kickout_value, depth_left, heuristic_number):
         min_value = inf
         legal_moves = board.get_legal_moves()
         
@@ -65,10 +65,10 @@ class Minimax_Agent:
             # Otherwise we need to play-out or estimate.
             # If we reached max search depth, apply heuristic:
             if(depth_left == 0):
-                min_value = min(min_value, board.heuristic())
+                min_value = min(min_value, board.heuristic(heuristic_number))
             # Otherwise play out:
             else:
-                min_value = min(min_value, self.max_move(board, min_value, depth_left - 1))
+                min_value = min(min_value, self.max_move(board, min_value, depth_left - 1, heuristic_number))
             board.unmove() # Undo the simulation move
             # If we can prune:
             if(min_value < kickout_value):
@@ -78,7 +78,7 @@ class Minimax_Agent:
 
 
     # Get the best move for player given a board.
-    def get_best_move(self, board, search_depth):
+    def get_best_move(self, board, search_depth, heuristic_number):
         # Return the move that's closer to the middle. This will help
         # settle ties, since middle moves are generally prefered.
         def better_move(move1, move2):
@@ -105,7 +105,7 @@ class Minimax_Agent:
             # Otherwise we need to play-out or estimate.
             # If we reached max search depth, apply heuristic:
             if(search_depth == 0):
-                estimate = board.heuristic()
+                estimate = board.heuristic(heuristic_number)
                 # If new best move found
                 if(estimate > max_value):
                     max_value = estimate
@@ -116,8 +116,7 @@ class Minimax_Agent:
                     best_move = better_move(best_move, move)
             # Otherwise play out:
             else:
-                estimate = self.min_move(board, max_value, search_depth - 1)
-                print(f"Move {move} estimate: {estimate}")
+                estimate = self.min_move(board, max_value, search_depth - 1, heuristic_number)
                 # If new best move found
                 if(estimate > max_value):
                     max_value = estimate

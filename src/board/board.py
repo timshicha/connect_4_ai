@@ -131,10 +131,22 @@ class Board:
         return 0
     
     
-    # Estimate how favorable this position is.
-    # Large negative numbers are very favorable for player -1
-    # and vice versa.
-    def heuristic(self):
+    # Apply the heuristic. Specify which heuristic (there are a few
+    # different heuristic functions).
+    def heuristic(self, heuristic_number):
+        if(heuristic_number == 0): return self.__heuristic0_1_2(version=0)
+        if(heuristic_number == 1): return self.__heuristic0_1_2(version=1)
+        if(heuristic_number == 2): return self.__heuristic0_1_2(version=2)
+    
+        
+        
+    # Heuristic 1:
+    # Gives a point for each 4-in-a-row minus one piece (must be empty).
+    # In version 0, it gives no additiona points for pieces in the middle column.
+    # In version 1, it gives points for each piece in the middle column.
+    # In version 2, it gives points only for the bottom 4 piece in the middle
+    # column since top middle pieces might not mean much.
+    def __heuristic0_1_2(self, version):
         score = 0
         # Look for 4-in-a-row patterns where either player has
         # 3 of their pieces and the last one is empty.
@@ -180,8 +192,15 @@ class Board:
         #
         # Finally, give points for having pieces in the middle column,
         # giving more points to lower rows:
-        weight = 1
-        for row in range(ROWS):
-            score += self.__board[row, int(COLUMNS / 2)] * weight
-            weight -= 0.1  
+        if(version == 1):
+            weight = 1
+            for row in range(ROWS):
+                score += self.__board[row, int(COLUMNS / 2)] * weight
+                weight -= 0.1
+        elif(version == 2):
+            weight = 1
+            for row in range(4):
+                score += self.__board[row, int(COLUMNS / 2)] * weight
+                weight -= 0.1
         return score
+                

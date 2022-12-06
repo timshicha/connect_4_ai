@@ -12,12 +12,15 @@ board.print_board()
 while(1):
     
     if(board.get_turn() == 1):
-        best_move = agent.get_best_move(board, 5)
-        print("Agent moves:", best_move)
+        print("\nAgent's turn. Agent is thinking...")
+        best_move = agent.get_best_move(board, 5, 2)
+        print("Agent's move:", best_move)
         board.move(best_move)
         
     else:
-        move = int(input("Move: "))
+        move = int(input("\nYour turn. Your move: "))
+        while(move not in board.get_legal_moves()):
+            move = int(input("Illegal move. Try again: "))
         board.move(move)
         
     board.print_board()
