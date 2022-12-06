@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 ROWS = 6 # Limit to 10 or less (heuristic may become bad)
 COLUMNS = 7
 
@@ -24,6 +25,11 @@ class Board:
     def __swap_turn(self):
         if(self.__turn == 1): self.__turn = -1
         else: self.__turn = 1
+        
+    
+    # Get the current player's turn
+    def get_turn(self):
+        return self.__turn
         
     # Returns the legal moves (i.e., columns that are not full)
     def get_legal_moves(self):
@@ -157,8 +163,8 @@ class Board:
                     self.__board[bottom_piece_row + 2, rightmost_piece_column - 2] +\
                     self.__board[bottom_piece_row + 3, rightmost_piece_column - 3]
                 if(eval == 3): score += 1
-                elif(eval == -3): score -= 1 
-        #           
+                elif(eval == -3): score -= 1
+        #
         # Finally, give points for having pieces in the middle column,
         # giving more points to lower rows:
         weight = 1
