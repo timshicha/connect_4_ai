@@ -11,8 +11,9 @@ decrease_above = 100000
 class Minimax_Agent:
     
     
-    def __init__(self):
-        pass
+    def __init__(self, search_depth, heuristic_number):
+        self.__search_depth = search_depth
+        self.__heuristic_number = heuristic_number
         
         
     # Return value of the agent's best move.
@@ -90,7 +91,7 @@ class Minimax_Agent:
 
 
     # Get the best move for player given a board.
-    def get_best_move(self, board, search_depth, heuristic_number):
+    def get_best_move(self, board):
         # Return the move that's closer to the middle. This will help
         # settle ties, since middle moves are generally prefered.
         def better_move(move1, move2):
@@ -116,8 +117,8 @@ class Minimax_Agent:
                 return move
             # Otherwise we need to play-out or estimate.
             # If we reached max search depth, apply heuristic:
-            if(search_depth == 0):
-                estimate = board.heuristic(heuristic_number)
+            if(self.__search_depth == 0):
+                estimate = board.heuristic(self.__heuristic_number)
                 # If new best move found
                 if(estimate > max_value):
                     max_value = estimate
@@ -128,7 +129,7 @@ class Minimax_Agent:
                     best_move = better_move(best_move, move)
             # Otherwise play out:
             else:
-                estimate = self.min_move(board, max_value, search_depth - 1, heuristic_number)
+                estimate = self.min_move(board, max_value, self.__search_depth - 1, self.__heuristic_number)
                 if(estimate > decrease_above):
                     estimate -= 100
                 # If new best move found
