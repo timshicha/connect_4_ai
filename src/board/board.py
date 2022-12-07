@@ -139,7 +139,7 @@ class Board:
         if(heuristic_number == 2): return self.__heuristic0_1_2(version=2)
     
         
-        
+    
     # Heuristic 1:
     # Gives a point for each 4-in-a-row minus one piece (must be empty).
     # In version 0, it gives no additiona points for pieces in the middle column.

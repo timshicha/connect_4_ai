@@ -12,8 +12,12 @@ board.print_board()
 while(1):
     
     if(board.get_turn() == 1):
-        print("\nAgent's turn. Agent is thinking...")
-        best_move = agent.get_best_move(board, 5, 2)
+        a = input("\nAgent's turn. pick number (enter for agent to think): ")
+        if(a == ""):
+            print("Agent is thinking...")
+            best_move = agent.get_best_move(board, 5, 2)
+        else:
+            best_move = int(a)
         print("Agent's move:", best_move)
         board.move(best_move)
         

@@ -2,6 +2,12 @@
 from board.board import Board, ROWS, COLUMNS
 from math import inf
 
+# Instead of inf, use big value so that decreasing it has an impact.
+# Useful for choosing paths that lead to shortest win or longest loss.
+big_value = 10000000
+# Decrease big value by 100 per term until we reach 100000
+decrease_above = 100000
+
 class Minimax_Agent:
     
     
@@ -15,7 +21,7 @@ class Minimax_Agent:
     # Depth_left tells us how much farther down the tree we will
     # search before applying the heuristic.
     def max_move(self, board, kickout_value, depth_left, heuristic_number):
-        max_value = -inf
+        max_value = -big_value
         legal_moves = board.get_legal_moves()
         
         # Try each move:
@@ -25,7 +31,7 @@ class Minimax_Agent:
             # If this was a winning move, just return (guaranteed best value).
             if(board.check_win(turn)):
                 board.unmove()
-                return inf
+                return big_value
             # If tie, return 0
             elif(board.check_full()):
                 board.unmove()
@@ -36,7 +42,10 @@ class Minimax_Agent:
                 max_value = max(max_value, board.heuristic(heuristic_number))
             # Otherwise play out:
             else:
-                max_value = max(max_value, self.min_move(board, max_value, depth_left - 1, heuristic_number))
+                estimate = self.min_move(board, max_value, depth_left - 1, heuristic_number)
+                if(estimate > decrease_above):
+                    estimate -= 100
+                max_value = max(max_value, estimate)
             board.unmove() # Undo the simulation move
             # If we can prune:
             if(max_value > kickout_value):
@@ -46,7 +55,7 @@ class Minimax_Agent:
         
     
     def min_move(self, board, kickout_value, depth_left, heuristic_number):
-        min_value = inf
+        min_value = big_value
         legal_moves = board.get_legal_moves()
         
         # Try each move:
@@ -57,7 +66,7 @@ class Minimax_Agent:
             # return (guaranteed worst value).
             if(board.check_win(turn)):
                 board.unmove()
-                return -inf
+                return -big_value
             # If tie, return 0
             elif(board.check_full()):
                 board.unmove()
@@ -68,7 +77,10 @@ class Minimax_Agent:
                 min_value = min(min_value, board.heuristic(heuristic_number))
             # Otherwise play out:
             else:
-                min_value = min(min_value, self.max_move(board, min_value, depth_left - 1, heuristic_number))
+                estimate = self.max_move(board, min_value, depth_left - 1, heuristic_number)
+                if(estimate < -decrease_above):
+                    estimate += 100
+                min_value = min(min_value, estimate)
             board.unmove() # Undo the simulation move
             # If we can prune:
             if(min_value < kickout_value):
@@ -89,7 +101,7 @@ class Minimax_Agent:
                 if(move2 == move): return move2
             return move1
 
-        max_value = -inf
+        max_value = -big_value
         best_move = None # Ties will be settled by choosing middle-most column.
         legal_moves = board.get_legal_moves()
         
@@ -117,6 +129,8 @@ class Minimax_Agent:
             # Otherwise play out:
             else:
                 estimate = self.min_move(board, max_value, search_depth - 1, heuristic_number)
+                if(estimate > decrease_above):
+                    estimate -= 100
                 # If new best move found
                 if(estimate > max_value):
                     max_value = estimate
