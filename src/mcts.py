@@ -69,10 +69,9 @@ class MCTS_Agent:
         
         
     # Play a game and train from it given an opponent's rule (as a function) for playing.
-    # Specify if the agent (agent_player) is player -1 or 1.
-    def train_game(self, opponent_policy, agent_player):
+    def train_game(self, opponent_policy):
         
-        def step(current_board, opponent_policy):
+        def step(current_board, opponent_policy, agent_player):
             # If the opponent's turn:
             if(current_board.get_turn() != agent_player):
                 current_board.move(opponent_policy(current_board))
@@ -144,7 +143,8 @@ class MCTS_Agent:
             return reward, best_action_value
     
         # Call recursive function to train on the game
-        step(Board(), opponent_policy)
+        board = Board()
+        step(board, opponent_policy, 1)
                     
 
     # Estimate the Q-value of a board given the state and action (move)
