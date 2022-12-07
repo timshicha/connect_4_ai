@@ -3,6 +3,7 @@
 import numpy as np
 import random
 from math import inf
+from board.board import Board
 
 
 
@@ -141,7 +142,9 @@ class MCTS_Agent:
             self.train_single_example(current_board, action, target_q_value)
             
             return reward, best_action_value
-                
+    
+        # Call recursive function to train on the game
+        step(Board(), opponent_policy)
                     
 
     # Estimate the Q-value of a board given the state and action (move)
