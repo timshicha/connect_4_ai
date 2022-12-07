@@ -5,7 +5,7 @@ from math import inf
 # Instead of inf, use big value so that decreasing it has an impact.
 # Useful for choosing paths that lead to shortest win or longest loss.
 big_value = 10000000
-# Decrease big value by 100 per term until we reach 100000
+# Decrease big value by 100 per turn until we reach 100000
 decrease_above = 100000
 
 class Minimax_Agent:

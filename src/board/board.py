@@ -18,6 +18,10 @@ class Board:
         self.__turn = random.choice([-1, 1])
     
     
+    # Return a board in the form of an array
+    def get_board(self):
+        return np.matrix.flatten(self.__board)
+    
     # Print the board in a way that's easy for humans to understand.
     def print_board(self):
         def filter(number):
