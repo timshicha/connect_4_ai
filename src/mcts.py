@@ -4,6 +4,8 @@ import numpy as np
 from math import sqrt, log, inf
 import random
 
+
+
 # MCTS builds a tree; these nodes will be used for the tree.
 # score/possible is the favorability of this node.
 # children is a list of child nodes. The index is the action, the
@@ -42,14 +44,14 @@ class TreeNode:
     def expansion_favorability(self, N, c):
         # If this is a winning board, "expand" this way all the time:
         if(self.game_result == 1):
-            return inf
+            return 1
         # If tie, this would be the only move available. Return anything (0):
         elif(self.game_result == 0.5):
-            return 0
+            return 0.5
         # If no games through this node have been played (divide by 0),
         # return out a decent number to encourage to expand this way at least
         # once:
-        if(self.games == 0): return 1
+        if(self.games == 0): return inf
         return self.score/self.games + c * sqrt(log(N) / self.games)
     
     
@@ -73,7 +75,7 @@ class TreeNode:
     
     # Get the favorability of choosing this action in a test-game
     def calculate_favorability(self):
-        if(self.game_result == 1): return 1
+        if(self.game_result == 1): return inf
         if(self.game_result == 0.5): return 0.5
         if(self.games == 0): return 0
         else: return self.score / self.games
@@ -130,10 +132,11 @@ class MCTS_Agent:
             return 0.5
         # Otherwise, simulate and update the score and games played
         result = self.simulate(board, board.get_turn())
+        result = self.opponent_score(result)
         treenode.score += result
         treenode.games += 1
         # Return the result as it would appear to the opponent:
-        return self.opponent_score(result)
+        return result
         
         
     # Go down the tree, find a leaf, expand it and run a simulation on it
@@ -150,21 +153,23 @@ class MCTS_Agent:
             current_board.move(child)
             # Run simulation on child
             result = self.simulate_and_update_leaf(current_board, treenode.children[child])
+            result = self.opponent_score(result)
             treenode.score += result
             treenode.games += 1
             # Undo the move and return the result
             current_board.unmove()
-            return self.opponent_score(result)
+            return result
         # Otherwise, this is not a leaf. We need to keep going until we find a leaf.
         # Choose an action and traverse in that direction:
         child = treenode.choose_expansion(c)
         current_board.move(child)
         result = self.expand(current_board, treenode.children[child], c)
+        result = self.opponent_score(result)
         # Update this treenode's info, undo move, and return result to parent
         treenode.score += result
         treenode.games += 1
         current_board.unmove()
-        return self.opponent_score(result)
+        return result
         
             
     # Given a board, make the best move.
@@ -178,10 +183,17 @@ class MCTS_Agent:
         for i in range(simulations):
             self.expand(board, treenode, exploration_parameter)
             
+        max_child = None
+        max_child_favorability = -inf    
         for child in treenode.children:
+            favorability = treenode.children[child].calculate_favorability()
+            if(favorability > max_child_favorability):
+                max_child = child
+                max_child_favorability = favorability
             print("Action:", child)
-            print("   Favorability:", treenode.children[child].calculate_favorability())
-            
+            print("   Favorability:", favorability)
+
+        return max_child
     
             
             
