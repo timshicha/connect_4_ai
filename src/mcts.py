@@ -57,11 +57,6 @@ class TreeNode:
     
     # Get the action node we should expand next
     def choose_expansion(self, c):
-        """
-        # If we haven't created children yet, create children
-        if(self.children == None):
-            self.create_children(current_board)
-        """
         # Now find and return the child with the maximum expansion favorability
         max_child = None
         max_child_favorability = -inf
@@ -190,11 +185,6 @@ class MCTS_Agent:
             if(favorability > max_child_favorability):
                 max_child = child
                 max_child_favorability = favorability
-            print("Action:", child)
-            print("   Favorability:", favorability)
 
         return max_child
     
-            
-            
-            

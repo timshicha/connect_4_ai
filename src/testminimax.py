@@ -5,17 +5,17 @@ from minimax import Minimax_Agent
 
 
 board = Board()
-agent = Minimax_Agent()
+agent = Minimax_Agent(int(input("Search depth: ")), 1)
 
 board.print_board()
 
 while(1):
     
-    if(board.get_turn() == 1):
+    if(board.get_turn() == -1):
         a = input("\nAgent's turn. pick number (enter for agent to think): ")
         if(a == ""):
             print("Agent is thinking...")
-            best_move = agent.get_best_move(board, 5, 2)
+            best_move = agent.get_move(board)
         else:
             best_move = int(a)
         print("Agent's move:", best_move)

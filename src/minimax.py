@@ -11,7 +11,7 @@ decrease_above = 100000
 class Minimax_Agent:
     
     
-    def __init__(self, search_depth, heuristic_number):
+    def __init__(self, search_depth, heuristic_number=1):
         self.__search_depth = search_depth
         self.__heuristic_number = heuristic_number
         
@@ -91,7 +91,7 @@ class Minimax_Agent:
 
 
     # Get the best move for player given a board.
-    def get_best_move(self, board):
+    def get_move(self, board):
         # Return the move that's closer to the middle. This will help
         # settle ties, since middle moves are generally prefered.
         def better_move(move1, move2):
@@ -142,9 +142,4 @@ class Minimax_Agent:
                     best_move = better_move(best_move, move)
             board.unmove() # Undo the simulation move
         return best_move
-        
-        
-        
-        
-    
-    
+
