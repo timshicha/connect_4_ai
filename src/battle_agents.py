@@ -54,12 +54,12 @@ print("Agent 2 is Monte-Carlo TS.")
 iterations = int(input("Number of iterations: "))
 agent2_move_rule = MCTS_Agent(iterations).get_move
 
-number_of_games = int(input("Number of games: "))
+number_of_game_sets = int(input("Number of game sets (one start per agent): "))
 agent1_wins = 0
 agent2_wins = 0
 ties = 0
 
-for game in range(number_of_games):
+for game in range(number_of_game_sets):
     new_a1_wins, new_a2_wins, new_ties = battle_agents(agent1_move_rule, agent2_move_rule)
     agent1_wins += new_a1_wins
     agent2_wins += new_a2_wins
