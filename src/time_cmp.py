@@ -20,9 +20,9 @@ def time_minimax(board, depth):
 # Time how long it takes for MCTS to return its best move on
 # an empty board.
 def time_mcts(board, iterations):
-    mcts_agent = MCTS_Agent()
+    mcts_agent = MCTS_Agent(iterations)
     start_time = time()
-    mcts_agent.get_move(board, iterations)
+    mcts_agent.get_move(board)
     end_time = time()
     return end_time - start_time
 

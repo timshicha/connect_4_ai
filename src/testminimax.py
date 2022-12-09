@@ -5,19 +5,14 @@ from minimax import Minimax_Agent
 
 
 board = Board()
-agent = Minimax_Agent(int(input("Search depth: ")), 1)
+agent = Minimax_Agent(int(input("Enter search depth: ")), 1)
 
 board.print_board()
 
 while(1):
     
-    if(board.get_turn() == -1):
-        a = input("\nAgent's turn. pick number (enter for agent to think): ")
-        if(a == ""):
-            print("Agent is thinking...")
-            best_move = agent.get_move(board)
-        else:
-            best_move = int(a)
+    if(board.get_turn() == 1):
+        best_move = agent.get_move(board)
         print("Agent's move:", best_move)
         board.move(best_move)
         
@@ -29,11 +24,11 @@ while(1):
         
     board.print_board()
     
-    if(board.check_win(1)):
-        print("Agent wins!")
-        break
-    elif(board.check_win(-1)):
+    if(board.check_win(-1)):
         print("You win!")
+        break
+    elif(board.check_win(1)):
+        print("Agent wins!")
         break
     elif(board.check_full()):
         print("Tie game.")

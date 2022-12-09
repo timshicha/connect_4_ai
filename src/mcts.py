@@ -19,7 +19,7 @@ class TreeNode:
             self.game_result = 1
         elif(current_board.check_full()):
             self.game_result = 0.5
-            
+        
         self.score = 0 # Keep track of number of wins
         self.games = 0 # Keep track of number of games played
         # Create a dictionary of children.
@@ -78,8 +78,9 @@ class TreeNode:
         
 class MCTS_Agent:
     
-    def __init__(self, exploration_paremeter=sqrt(2)):
+    def __init__(self, number_of_simulations, exploration_paremeter=sqrt(2)):
         self.__exploration_parameter = exploration_paremeter
+        self.__number_of_simulations = number_of_simulations
     
     
     # Return the score from the opponent's perspective
@@ -170,13 +171,13 @@ class MCTS_Agent:
     # Given a board, make the best move.
     # Choose how many trials/simulations to play out.
     # Assumes the current board is not already a winning or tying board.
-    def get_move(self, board, simulations, exploration_parameter=sqrt(2)):
+    def get_move(self, board):
         # Make a tree (root node) and create the children
         treenode = TreeNode(board)
         
         # Run expansion/simulation algorithm for specific number of moves
-        for i in range(simulations):
-            self.expand(board, treenode, exploration_parameter)
+        for i in range(self.__number_of_simulations):
+            self.expand(board, treenode, self.__exploration_parameter)
             
         max_child = None
         max_child_favorability = -inf    
@@ -187,4 +188,3 @@ class MCTS_Agent:
                 max_child_favorability = favorability
 
         return max_child
-    

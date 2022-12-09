@@ -11,11 +11,14 @@ COLUMNS = 7
 class Board:
 
 
-    def __init__(self):
+    def __init__(self, starting_player=None):
         self.__board = np.zeros((ROWS,COLUMNS), dtype=int) # (First row is bottom row)
         self.__top = np.zeros(COLUMNS, dtype=int) # Lowest empty row of this column (i.e., where a piece would fall)
         self.__history = [] # Allows us to simulate and undo moves
-        self.__turn = random.choice([-1, 1])
+        if(starting_player == None):
+            self.__turn = random.choice([-1, 1])
+        else:
+            self.__turn = starting_player
     
     
     # Return a board in the form of an array
