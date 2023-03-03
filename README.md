@@ -27,4 +27,6 @@ For more info about the project, algorithms used, and findings, see the pdf file
 
 -READMY.md -> This document.
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/timshicha/connect_4_ai)
+
 == == == == == == == == == ==
