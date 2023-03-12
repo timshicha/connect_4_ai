@@ -30,3 +30,4 @@ while(1):
     if(board.check_full()):
         print("Tie game")
         break
+board.print_board()
